@@ -11,6 +11,7 @@ void convertExpression(ifstream& inputFile, ofstream& outputFile);
 bool isOperand(char);
 bool isOperator(char);
 bool isParenthesis(char);
+//bool isValidStatement(ifstream&);
 int precedent(char);
 
 
@@ -18,6 +19,7 @@ int main() {
     string inputFileName;
     string outputFileName;
     string postFix;
+    string scannedExpression;
 
     cout << "Welcome! Enter the name of the file you would like to open: ";
     cin >> inputFileName;
@@ -49,33 +51,40 @@ int main() {
 
     char charRead;
 
-
     outputFile << "File successfully opened" << endl;
     outputFile << "Input Line: # ";
-
+    
+    // check expression in input file
     while (inputFile >> charRead) {
-        outputFile << charRead;
+        scannedExpression += charRead;
+    }
+
+    cout << "Input Line: # " << scannedExpression << " #" << endl;
+    outputFile << "Input Line: # " << scannedExpression << " #" << endl;
+
+    for(int i=0; i < scannedExpression.length(); i++) {
+        outputFile << scannedExpression[i];
 
         //if read character is operand, add to postFix string
-        if (isOperand(charRead)) {
-            postFix += charRead;
+        if (isOperand(scannedExpression[i])) {
+            postFix += scannedExpression[i];
         }
         //if read character is operator, add to stack
-        else if (isOperator(charRead)) {
+        else if (isOperator(scannedExpression[i])) {
 
             //pop all Stack operators if scanned operand has lower precendent than existing precedence operator in stack
             //add popped operator to postFix string
-            while (!myStack.empty() && precedent(charRead) < precedent(myStack.top())) {
+            while (!myStack.empty() && precedent(scannedExpression[i]) < precedent(myStack.top())) {
                 postFix += myStack.top();
                 myStack.pop();
             }
 
             //push operand into stack
-            myStack.push(charRead);
+            myStack.push(scannedExpression[i]);
         }
-        else if (isParenthesis(charRead)) {
-            if (charRead == '(')
-                myStack.push(charRead);
+        else if (isParenthesis(scannedExpression[i])) {
+            if (scannedExpression[i] == '(')
+                myStack.push(scannedExpression[i]);
             else {
                 while (!myStack.empty() && myStack.top() != '(') {
                     postFix += myStack.top();
@@ -85,7 +94,9 @@ int main() {
                 if (!myStack.empty())
                     myStack.pop();
                 else {
-                    cout << "Mismatched parenthesis" << endl;
+                    cout << "Invalid statement: " << endl;
+                    cout << "Mismatched parenthesis: " << endl;
+                    outputFile << "Invalid statement: " << endl;
                     outputFile << "Mismatched parenthesis" << endl;
                     return 0;
                 }
@@ -165,3 +176,13 @@ bool isParenthesis(char charRead) {
     else
         return false;
 }
+
+//bool isValidStatement(ifstream& inputFile) {
+//    char charRead;
+//    while (inputFile >> charRead) {
+//
+//    }
+//
+//
+//}
+
