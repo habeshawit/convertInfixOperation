@@ -1,0 +1,2 @@
+Program reading from text.txt
+Unable to open file
