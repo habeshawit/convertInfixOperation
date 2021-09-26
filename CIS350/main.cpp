@@ -55,14 +55,23 @@ int main() {
     outputFile << "Input Line: # ";
     
     // check expression in input file
-    while (inputFile >> charRead) {
+    while (inputFile >> noskipws >> charRead && charRead != '\n') {
         scannedExpression += charRead;
+
+        //move logic into while loop **** reminder
+
+        //check for spacing error by tracking odd iterator is a space
+
+
+
     }
 
     cout << "Input Line: # " << scannedExpression << " #" << endl;
     outputFile << "Input Line: # " << scannedExpression << " #" << endl;
 
     for(int i=0; i < scannedExpression.length(); i++) {
+
+        //validate data (check for invalid operand, operator, spacing error, mismatched parenthesis
         outputFile << scannedExpression[i];
 
         //if read character is operand, add to postFix string
@@ -94,7 +103,7 @@ int main() {
                 if (!myStack.empty())
                     myStack.pop();
                 else {
-                    cout << "Invalid statement: " << endl;
+                    cout << "Invalid statement: " << scannedExpression[i] << endl;
                     cout << "Mismatched parenthesis: " << endl;
                     outputFile << "Invalid statement: " << endl;
                     outputFile << "Mismatched parenthesis" << endl;
@@ -102,6 +111,9 @@ int main() {
                 }
 
             }
+        } 
+        else {
+            cout << "Invalid Statement: " << endl;
         }
 
     };
