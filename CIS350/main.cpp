@@ -13,7 +13,7 @@ bool isOperand(char);
 bool isOperator(char);
 bool isParenthesis(char);
 int precedent(char);
-void buildTree(string);
+void constructTree(string);
 void printOperations(string);
 string validate(string);
 string convertToPostFix(string);
@@ -52,7 +52,7 @@ int main() {
             cout << validationResult << endl;
             postFix = convertToPostFix(scannedExpression);
             printOperations(postFix);
-            //buildTree(postFix);
+            constructTree(postFix);
         } 
         else {
             cout << validationResult << endl;
@@ -245,6 +245,107 @@ void printOperations(string expression) {
             cout << operand2 + operand1 + charRead << endl;
         }
     }
+}
+
+void constructTree(string expression) {
+ 
+    struct Node
+    {
+        char data;
+        Node* left, * right;
+    };
+
+    //stack to store pointers
+    stack<Node*> s;
+
+    for (int i = 0; i < expression.length(); i++) { 
+        char charRead = expression[i];
+
+        //if operand, turn into leaf node and push to stack
+        if (isOperand(charRead)) {
+            Node* root = new Node();
+            root ->data = charRead;
+            root->left = root->right = nullptr;
+            s.push(root);
+        } 
+
+        //if operator
+        else {
+            //create node with operator as root
+            Node* root = new Node();
+            root->data = charRead;
+
+            //Pop item from stack and set as 1st child
+            Node* child1 = s.top();
+            s.pop();
+
+            //Pop item from stack and set as 2nd child
+            Node* child2 = s.top();
+            s.pop();
+
+            //set right and left children
+            root->left = child1;
+            root->right = child2;
+
+            //add subtree to stack
+            s.push(root);
+        }
+    }
 
 
+
+
+
+
+    Node* newNode(char v)
+    {
+        tree *temp = new tree;
+        temp->left = temp->right = NULL;
+        temp->data = v;
+        return temp;
+    };
+
+    // Returns root of constructed tree for given
+// postfix expression
+    tree* constructTree(char postfix[])
+    {
+        stack<et*> st;
+        et* t, * t1, * t2;
+
+        // Traverse through every character of
+        // input expression
+        for (int i = 0; i < strlen(postfix); i++)
+        {
+            // If operand, simply push into stack
+            if (!isOperator(postfix[i]))
+            {
+                t = newNode(postfix[i]);
+                st.push(t);
+            }
+            else // operator
+            {
+                t = newNode(postfix[i]);
+
+                // Pop two top nodes
+                t1 = st.top(); // Store top
+                st.pop();      // Remove top
+                t2 = st.top();
+                st.pop();
+
+                //  make them children
+                t->right = t1;
+                t->left = t2;
+
+                // Add this subexpression to stack
+                st.push(t);
+            }
+        }
+
+        //  only element will be root of expression
+        // tree
+        t = st.top();
+        st.pop();
+
+        return t;
+    }
 }
