@@ -3,6 +3,8 @@
 #include <stack>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <functional>
 
 
 using namespace std;
@@ -13,19 +15,24 @@ bool isOperator(char);
 bool isParenthesis(char);
 //bool isValidStatement(ifstream&);
 int precedent(char);
+string validate(string);
+//string getExpression(char);
+
+string convertToPostFix(string);
+void buildTree(string);
 
 
 int main() {
-    string inputFileName;
-    string outputFileName;
+    string inputFileName = "file.txt";
+    string outputFileName = "out.txt";
     string postFix;
     string scannedExpression;
 
-    cout << "Welcome! Enter the name of the file you would like to open: ";
-    cin >> inputFileName;
+    //cout << "Welcome! Enter the name of the file you would like to open: ";
+    //cin >> inputFileName;
 
-    cout << "\nEnter the name of the output file: ";
-    cin >> outputFileName;
+    //cout << "\nEnter the name of the output file: ";
+    //cin >> outputFileName;
 
     //Read from input file & check for file errors
     ifstream inputFile(inputFileName);
@@ -34,118 +41,27 @@ int main() {
     cout << "Program reading from " << inputFileName << endl;
     outputFile << "Program reading from " << inputFileName << endl;
 
-    if (!inputFile) {
-        cout << "Could not find/open the input file" << endl;
-        outputFile << "Unable to open file" << endl;
-        return 0;
-    }
-    else if (inputFile.peek() == std::ifstream::traits_type::eof()) {
-        cout << "Input file is empty" << endl;
-        outputFile << "Input file is empty" << endl;
-        return 0;
-    }
+    while (!inputFile.eof())
+    {
+        string scannedExpression;
+        string validationResult;
 
+        getline(inputFile, scannedExpression);
+        cout << "Input Line: #" << scannedExpression << "#" << endl;
 
-    // initialize stack
-    stack <char> myStack;
+        validationResult = validate(scannedExpression);
 
-    char charRead;
-
-    outputFile << "File successfully opened" << endl;
-    outputFile << "Input Line: # ";
-    
-    // check expression in input file
-    while (inputFile >> noskipws >> charRead && charRead != '\n') {
-        scannedExpression += charRead;
-
-        //move logic into while loop **** reminder
-
-        //check for spacing error by tracking odd iterator is a space
-
-
+        //if (validationResult == "Valid Statement") {
+        //    postFix = convertToPostFix(scannedExpression);
+        //    buildTree(postFix);
+        //} 
+        //else {
+        //    cout << validationResult << endl;
+        //}
 
     }
-
-    cout << "Input Line: # " << scannedExpression << " #" << endl;
-    outputFile << "Input Line: # " << scannedExpression << " #" << endl;
-
-    for(int i=0; i < scannedExpression.length(); i++) {
-
-        //validate data (check for invalid operand, operator, spacing error, mismatched parenthesis
-        outputFile << scannedExpression[i];
-
-        //if read character is operand, add to postFix string
-        if (isOperand(scannedExpression[i])) {
-            postFix += scannedExpression[i];
-        }
-        //if read character is operator, add to stack
-        else if (isOperator(scannedExpression[i])) {
-
-            //pop all Stack operators if scanned operand has lower precendent than existing precedence operator in stack
-            //add popped operator to postFix string
-            while (!myStack.empty() && precedent(scannedExpression[i]) < precedent(myStack.top())) {
-                postFix += myStack.top();
-                myStack.pop();
-            }
-
-            //push operand into stack
-            myStack.push(scannedExpression[i]);
-        }
-        else if (isParenthesis(scannedExpression[i])) {
-            if (scannedExpression[i] == '(')
-                myStack.push(scannedExpression[i]);
-            else {
-                while (!myStack.empty() && myStack.top() != '(') {
-                    postFix += myStack.top();
-                    myStack.pop();
-                }
-                
-                if (!myStack.empty())
-                    myStack.pop();
-                else {
-                    cout << "Invalid statement: " << scannedExpression[i] << endl;
-                    cout << "Mismatched parenthesis: " << endl;
-                    outputFile << "Invalid statement: " << endl;
-                    outputFile << "Mismatched parenthesis" << endl;
-                    return 0;
-                }
-
-            }
-        } 
-        else {
-            cout << "Invalid Statement: " << endl;
-        }
-
-    };
-
-    cout << "postFix: " << postFix << endl;
-
-    cout << "stack size: " << myStack.size() << endl;
-
-    /*while (!myStack.empty()) {
-        cout << myStack.top() << endl;
-        myStack.pop();
-    }*/
-
-
-    //
-    /*for (int i = 0; i < my_stack.size(); i++) {
-        cout << my_stack[i] << endl;
-    }*/
-
 
     return 0;
-
-    //ofstream outputFile("inputFile.txt", ios::out | ios::trunc);
-    //ifstream inputFile("inputFile.txt", ios::in);
-
-    //ifstream inputFile;
-    //inputFile.open("inputFile.dat");
-    //ofstream outputFile;
-    //outputFile.open("outputFile.dat");
-
-    //convertExpression(inputFile, outputFile);
-
 }
 
 void convertExpression(ifstream& inputFile, ofstream& outputFile) {
@@ -198,3 +114,69 @@ bool isParenthesis(char charRead) {
 //
 //}
 
+//string getExpression(char charRead) {
+//
+//}
+
+
+string validate(string expression) {
+
+    string result = "Invalid Statement: \n";
+    int countOpening = count(expression.begin(), expression.end(), '(');
+    int countClosing = count(expression.begin(), expression.end(), ')');
+    vector< int > errors;
+
+
+    //check for mismatched parenthesis error
+    if (countOpening != countClosing) {
+        if (!(find(errors.begin(), errors.end(), 1) != errors.end())) {
+            errors.push_back(1);
+        }
+        //result += "\tMismatched parenthesis\n";
+    }
+
+    for (int i = 0; i < expression.length(); i++) {
+
+        //check for invalid operand or operator
+        if (isOperand(expression[i])== false && isOperator(expression[i]) == false && isParenthesis(expression[i]) == false && !isblank(expression[i])) {
+            if (!(find(errors.begin(), errors.end(), 2) != errors.end())) {
+                errors.push_back(2);
+            }
+
+        }
+
+        //check for spacing error
+        if (i % 2 == 0) {
+            if (!isblank(expression[i]) ){
+                if (!(find(errors.begin(), errors.end(), 3) != errors.end())) {
+                    errors.push_back(3);
+                }
+            }
+        }
+    }
+
+    //check errors vector for all errors detected
+    if (errors.size() == 0) {
+        result = "Valid Statement";
+    }
+    else {
+        for (int i = 0; i < errors.size(); i++) {
+            switch (errors.at(i)) {
+            case 1:
+                result += "\tMismatched parenthesis\n";
+                break;
+            case 2:
+                result += "\tInvalid operand or operator detected\n";
+                break;
+            case 3:
+                result += "\tSpacing error\n";
+                break;
+            }
+        }
+
+    }
+
+    cout << result;
+    return result;
+
+}
