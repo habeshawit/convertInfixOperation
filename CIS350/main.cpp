@@ -12,12 +12,11 @@ using namespace std;
 bool isOperand(char);
 bool isOperator(char);
 bool isParenthesis(char);
-//bool isValidStatement(ifstream&);
 int precedent(char);
-string validate(string);
-
-string convertToPostFix(string);
 void buildTree(string);
+void printOperations(string);
+string validate(string);
+string convertToPostFix(string);
 
 
 int main() {
@@ -52,6 +51,7 @@ int main() {
         if (validationResult == "Valid Statement") {
             cout << validationResult << endl;
             postFix = convertToPostFix(scannedExpression);
+            printOperations(postFix);
             //buildTree(postFix);
         } 
         else {
@@ -111,7 +111,7 @@ string convertToPostFix(string scannedExpression) {
         myStack.pop();
     }
 
-    cout << "Postfix Expresssion: " << postFix;
+    cout << "Postfix Expresssion: " << postFix << endl;
     return postFix;
 }
 
@@ -168,11 +168,7 @@ string validate(string expression) {
     int countOpening = count(expression.begin(), expression.end(), '(');
     int countClosing = count(expression.begin(), expression.end(), ')');
 
-    cout << "opening " << countOpening << endl;
-    cout << "closing " << countClosing << endl;
-
     vector< int > errors;
-
 
     //check for mismatched parenthesis error
     if (countOpening != countClosing) {
@@ -224,4 +220,31 @@ string validate(string expression) {
     }
 
     return result;
+}
+
+//Function to print operations
+void printOperations(string expression) {
+    stack<string> newStack;
+    string operand1;
+    string operand2;
+
+    for (int i = 0; i < expression.length(); i++) {
+        char charRead = expression[i];
+
+        if (isOperand(charRead)) {
+            newStack.push(string(1, charRead));
+        }
+        else if (isOperator(charRead)) {
+            operand1 = newStack.top();
+            newStack.pop();
+
+            operand2 = newStack.top();
+            newStack.pop();
+
+            newStack.push(operand2 + operand1 + charRead);
+            cout << operand2 + operand1 + charRead << endl;
+        }
+    }
+
+
 }
