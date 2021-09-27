@@ -18,6 +18,18 @@ void printOperations(string);
 string validate(string);
 string convertToPostFix(string);
 
+struct Node
+{
+    char data;
+    Node* left, * right;
+};
+
+//stack to store pointers
+stack<Node*> s;
+
+void preorder(Node*);
+void inorder(Node*);
+void postorder(Node*);
 
 int main() {
     string inputFileName = "file.txt";
@@ -228,6 +240,8 @@ void printOperations(string expression) {
     string operand1;
     string operand2;
 
+    cout << "Operations: " << endl;
+
     for (int i = 0; i < expression.length(); i++) {
         char charRead = expression[i];
 
@@ -242,53 +256,131 @@ void printOperations(string expression) {
             newStack.pop();
 
             newStack.push(operand2 + operand1 + charRead);
-            cout << operand2 + operand1 + charRead << endl;
+            cout << "\t " << operand2 + operand1 + charRead << endl;
         }
     }
 }
 
 void constructTree(string expression) {
  
-    struct Node
-    {
-        char data;
-        Node* left, * right;
-    };
+    //struct Node
+    //{
+    //    char data;
+    //    Node* left, * right;
+    //};
 
-    //stack to store pointers
-    stack<Node*> s;
+    ////stack to store pointers
+    //stack<Node*> s;
 
     for (int i = 0; i < expression.length(); i++) { 
         char charRead = expression[i];
 
         //if operand, turn into leaf node and push to stack
         if (isOperand(charRead)) {
-            Node* root = new Node();
-            root ->data = charRead;
-            root->left = root->right = nullptr;
-            s.push(root);
+            Node* node = new Node();
+            node ->data = charRead;
+            node->left = node->right = nullptr;
+            s.push(node);
         } 
 
         //if operator
         else {
-            //create node with operator as root
-            Node* root = new Node();
-            root->data = charRead;
+            //create node with operator as node
+            Node *node = new Node();
+            node->data = charRead;
 
             //Pop item from stack and set as 1st child
-            Node* child1 = s.top();
+            Node *child1 = s.top();
             s.pop();
 
             //Pop item from stack and set as 2nd child
-            Node* child2 = s.top();
+            Node *child2 = s.top();
             s.pop();
 
             //set right and left children
-            root->left = child1;
-            root->right = child2;
+            node->right = child1;
+            node->left = child2;
 
             //add subtree to stack
-            s.push(root);
+            s.push(node);
+            //cout << node->left->data << endl;
+            //cout << node->data << endl;
+            //cout << node->right->data << endl;
+
         }
+    }
+
+    cout << "Prefix: ";
+    preorder(s.top());
+
+    cout << "\nInfix: ";
+    inorder(s.top());
+
+    cout << "\nPostfix: ";
+    postorder(s.top());
+
+    /*while (!s.empty())
+    {
+        Node *w = s.top();
+        cout << "current node " << w->data << endl;
+
+        cout << "print left " << w->left->data << endl;
+        cout << "print right " << w->right->data << endl;
+
+        if(w->left->left !=nullptr)
+            cout << "print 2nd level left " << w->left->left->data << endl;
+
+        if (w->left->right != nullptr)
+            cout << "print 2nd level right " << w->left->right->data << endl;
+
+        if (w->right->left != nullptr)
+            cout << "print 3rd level left " << w->right->left->data << endl;
+
+        if (w->right->right != nullptr)
+            cout << "print 3rd level right " << w->right->right->data << endl;
+
+        s.pop();
+    }*/
+
+}
+
+
+//void printTree(stack<Node*> s) {
+//
+//
+//
+//    if (root == NULL)
+//        return;
+//    space += COUNT;
+//    printTree(root->right, space);
+//    for (int i = COUNT; i < space; i++)
+//        cout << "\t";
+//    cout << root->data << "\n";
+//    printTree(root->left, space);
+//}
+
+
+void preorder(Node* ptr)
+{
+    if (ptr) {
+        cout << ptr->data; // visit
+        preorder(ptr->left);// left
+        preorder(ptr->right);// right}}
+    }
+}
+
+void inorder(Node* ptr)/* inordertree traversal */ {
+    if (ptr) {
+        inorder(ptr->left);// left
+        cout << ptr->data;// visit
+        inorder(ptr->right);// right
+    }
+}
+
+void postorder(Node* ptr)/* postordertree traversal */ {
+    if (ptr) {
+        postorder(ptr->left);// left
+        postorder(ptr->right);// right
+        cout << ptr->data;// visit
     }
 }
