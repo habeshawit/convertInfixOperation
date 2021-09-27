@@ -47,7 +47,7 @@ int main() {
         string validationResult;
 
         getline(inputFile, scannedExpression);
-        cout << "Input Line: #" << scannedExpression << "#" << endl;
+        cout << "\nInput Line: #" << scannedExpression << "#" << endl;
 
         validationResult = validate(scannedExpression);
 
@@ -122,7 +122,7 @@ bool isParenthesis(char charRead) {
 
 string validate(string expression) {
 
-    string result = "\nInvalid Statement: \n";
+    string result = "Invalid Statement: \n";
     int countOpening = count(expression.begin(), expression.end(), '(');
     int countClosing = count(expression.begin(), expression.end(), ')');
     vector< int > errors;
@@ -167,7 +167,7 @@ string validate(string expression) {
                 result += "\tMismatched parenthesis\n";
                 break;
             case 2:
-                result += "\tInvalid operand or operator detected\n";
+                result += "\tInvalid operand or operator\n";
                 break;
             case 3:
                 result += "\tSpacing error\n";
