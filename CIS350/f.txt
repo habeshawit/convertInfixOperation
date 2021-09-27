@@ -1,3 +1,0 @@
-Program reading from file.txt
-File successfully opened
-Input Line: #  #

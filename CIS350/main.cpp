@@ -9,14 +9,12 @@
 
 using namespace std;
 
-void convertExpression(ifstream& inputFile, ofstream& outputFile);
 bool isOperand(char);
 bool isOperator(char);
 bool isParenthesis(char);
 //bool isValidStatement(ifstream&);
 int precedent(char);
 string validate(string);
-//string getExpression(char);
 
 string convertToPostFix(string);
 void buildTree(string);
@@ -53,8 +51,8 @@ int main() {
 
         if (validationResult == "Valid Statement") {
             cout << validationResult << endl;
-            /*postFix = convertToPostFix(scannedExpression);
-            buildTree(postFix);*/
+            postFix = convertToPostFix(scannedExpression);
+            //buildTree(postFix);
         } 
         else {
             cout << validationResult << endl;
@@ -65,10 +63,59 @@ int main() {
     return 0;
 }
 
-void convertExpression(ifstream& inputFile, ofstream& outputFile) {
+//Function to convert infix expression to postfix
+string convertToPostFix(string scannedExpression) {
+    stack <char> myStack;
+    string postFix;
 
+    for (int i = 0; i < scannedExpression.length(); i++) {
+        char charRead = scannedExpression[i];
+
+        //if read character is operand, add to postFix string
+        if (isOperand(charRead)) {
+            postFix += charRead;
+        }
+        //if read character is operator, add to stack
+        else if (isOperator(charRead)) {
+
+            //pop all Stack operators if scanned operand has lower precendent than existing precedence operator in stack
+            //add popped operator to postFix string
+            while (!myStack.empty() && precedent(charRead) < precedent(myStack.top())) {
+                postFix += myStack.top();
+                myStack.pop();
+            }
+
+            //push operand into stack
+            myStack.push(charRead);
+        }
+        else if(isParenthesis(charRead)) {
+            if (charRead == '(')
+                myStack.push(charRead);
+            else {
+                while (!myStack.empty() && myStack.top() != '(') {
+                    postFix += myStack.top();
+                    myStack.pop();
+                }
+
+                if (!myStack.empty())
+                    myStack.pop();
+            }
+
+        }
+
+    };
+
+    //Pop remaining items in the stack
+    while (!myStack.empty()) {
+        postFix += myStack.top();
+        myStack.pop();
+    }
+
+    cout << "Postfix Expresssion: " << postFix;
+    return postFix;
 }
 
+//Function to check if scanned character is an operand
 bool isOperand(char charRead) {
     if ((charRead >= 'A' && charRead <= 'Z') || (charRead >= '0' && charRead <= '9')) {
         return true;
@@ -78,6 +125,7 @@ bool isOperand(char charRead) {
     }
 }
 
+//Function to check if scanned character is an operator
 bool isOperator(char charRead) {
     if ((charRead == '*') || (charRead == '/') || (charRead == '+') || (charRead == '-')) {
         return true;
@@ -87,6 +135,15 @@ bool isOperator(char charRead) {
     }
 }
 
+//Function to check if scanned character is a parenthesis
+bool isParenthesis(char charRead) {
+    if (charRead == '(' || charRead == ')')
+        return true;
+    else
+        return false;
+}
+
+//Function to check the precendence of scanned character
 int precedent(char charRead) {
     if (charRead == '*' || charRead == '/') {
         return 2;
@@ -99,32 +156,21 @@ int precedent(char charRead) {
     }
 }
 
-bool isParenthesis(char charRead) {
-    if (charRead == '(' || charRead == ')')
-        return true;
-    else
-        return false;
-}
-
-//bool isValidStatement(ifstream& inputFile) {
-//    char charRead;
-//    while (inputFile >> charRead) {
-//
-//    }
-//
-//
-//}
-
-//string getExpression(char charRead) {
-//
-//}
 
 
+
+
+
+//Function to validate if scanned expression is valid
 string validate(string expression) {
 
     string result = "Invalid Statement: \n";
     int countOpening = count(expression.begin(), expression.end(), '(');
     int countClosing = count(expression.begin(), expression.end(), ')');
+
+    cout << "opening " << countOpening << endl;
+    cout << "closing " << countClosing << endl;
+
     vector< int > errors;
 
 

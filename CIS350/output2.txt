@@ -1,5 +1,0 @@
-Program reading from file.txt
-File successfully opened
-Input Line: # Input Line: # (((A+B)))))(C+D) #
-(((A+B))))Invalid statement: 
-Mismatched parenthesis
