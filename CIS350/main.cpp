@@ -51,13 +51,14 @@ int main() {
 
         validationResult = validate(scannedExpression);
 
-        //if (validationResult == "Valid Statement") {
-        //    postFix = convertToPostFix(scannedExpression);
-        //    buildTree(postFix);
-        //} 
-        //else {
-        //    cout << validationResult << endl;
-        //}
+        if (validationResult == "Valid Statement") {
+            cout << validationResult << endl;
+            /*postFix = convertToPostFix(scannedExpression);
+            buildTree(postFix);*/
+        } 
+        else {
+            cout << validationResult << endl;
+        }
 
     }
 
@@ -121,7 +122,7 @@ bool isParenthesis(char charRead) {
 
 string validate(string expression) {
 
-    string result = "Invalid Statement: \n";
+    string result = "\nInvalid Statement: \n";
     int countOpening = count(expression.begin(), expression.end(), '(');
     int countClosing = count(expression.begin(), expression.end(), ')');
     vector< int > errors;
@@ -176,7 +177,5 @@ string validate(string expression) {
 
     }
 
-    cout << result;
     return result;
-
 }
