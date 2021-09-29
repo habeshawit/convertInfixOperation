@@ -35,8 +35,9 @@ void inorder(Node*);
 void postorder(Node*);
 void levelOrderTraversal(Node*);
 int height(Node*);
-void printLevelOrder(Node* root);
-void printLevelOrder(Node*);
+void printTree(Node* root);
+void printTree(Node*);
+void printCurrentLevel(Node*, int);
 
 
 int main() {
@@ -270,15 +271,6 @@ void printOperations(string expression) {
 }
 
 void constructTree(string expression) {
- 
-    //struct Node
-    //{
-    //    char data;
-    //    Node* left, * right;
-    //};
-
-    ////stack to store pointers
-    //stack<Node*> s;
 
     for (int i = 0; i < expression.length(); i++) { 
         char charRead = expression[i];
@@ -311,15 +303,12 @@ void constructTree(string expression) {
 
             //add subtree to stack
             s.push(node);
-            //cout << node->left->data << endl;
-            //cout << node->data << endl;
-            //cout << node->right->data << endl;
 
         }
     }
 
 
-    printLevelOrder(s.top());
+    printTree(s.top());
 
     cout << "\nPrefix: ";
     preorder(s.top());
@@ -359,34 +348,35 @@ void postorder(Node* ptr)/* postordertree traversal */ {
 
 
 //Print Tree in Level Order
-void printLevelOrder(Node* root)
+void printTree(Node* node)
 {
     cout << "\nPrinting tree top to bottom" << endl;
 
-    int h = height(root);
-    int i;
+    int treeHeight = height(node);
 
-    for (i = 1; i <= h; i++)
-    {
-        printGivenLevel(root, i);
+    for (int i = 0; i < treeHeight; i++){
+        printCurrentLevel(node, i+1);
         cout << endl;
     }
 }
 
 
-/* Print nodes at a given level */
-void printGivenLevel(Node* root, int level)
+//Print note at current level
+void printCurrentLevel(Node* node, int level)
 {
-    if (root == NULL)
+    if (node != NULL) {
+        if (level == 1) {
+            cout << node->data << " ";
+        }
+        else if (level > 1)
+        {
+            printCurrentLevel(node->left, level - 1);
+            printCurrentLevel(node->right, level - 1);
+        }
+    }
+    else {
         return;
-    if (level == 1) {
-        cout << root->data << " ";
-    }
-    else if (level > 1)
-    {
-        printGivenLevel(root->left, level - 1);
-        printGivenLevel(root->right, level - 1);
-    }
+    } 
 }
 
 
