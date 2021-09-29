@@ -19,8 +19,6 @@ void printOperations(string);
 string validate(string);
 string convertToPostFix(string);
 
-int space = 7;
-int leftSpace = space + 4;
 struct Node
 {
     char data;
@@ -36,6 +34,7 @@ void postorder(Node*);
 void levelOrderTraversal(Node*);
 int height(Node*);
 void printLevelOrder(Node* root);
+
 
 int main() {
     string inputFileName = "file.txt";
