@@ -35,11 +35,7 @@ void inorder(Node*);
 void postorder(Node*);
 void levelOrderTraversal(Node*);
 int height(Node*);
-
 void printLevelOrder(Node* root);
-void printGivenLevel(Node*, int);
-
-
 
 int main() {
     string inputFileName = "file.txt";
@@ -322,11 +318,6 @@ void constructTree(string expression) {
 
 
     printLevelOrder(s.top());
-
-
-    //levelOrderTraversal(s.top());
-
-    //printGivenLevel(s.top());
 
     cout << "\nPrefix: ";
     preorder(s.top());
