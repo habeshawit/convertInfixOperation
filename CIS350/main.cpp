@@ -34,8 +34,7 @@ void preorder(Node*);
 void inorder(Node*);
 void postorder(Node*);
 void levelOrderTraversal(Node*);
-int getHeight(Node* root);
-void printNodesAtLevel(Node* root, int currentLevel, int level);
+int height(Node*);
 
 void printLevelOrder(Node* root);
 void printGivenLevel(Node*, int);
@@ -389,74 +388,6 @@ void postorder(Node* ptr)/* postordertree traversal */ {
     }
 }
 
-/* Printd nodes of binary tree level wise */
-void levelOrderTraversal(Node* root) {
-    /* Find the height of tree */
-    int i;
-    int height = getHeight(root);
-
-    /* Iterate from level 0 to height-1 and
- print one level at a time */
-    for (i = 0; i < height; i++) {
-        printNodesAtLevel(root, 0, i);
-        printf("\n");
-    }
-}
-
-/* Returns maximum of two given numbers */
-int getMax(int a, int b) {
-    if (a >= b)
-        return a;
-    else
-        return b;
-}
-/*
-Returns height of a bianry tree
-*/
-int getHeight(Node* root) {
-    int leftHeight, rightHeight;
-    if (root == NULL)
-        return 0;
-    leftHeight = getHeight(root->left);
-    rightHeight = getHeight(root->right);
-
-    return getMax(leftHeight, rightHeight) + 1;
-}
-/*
-   Prints all node at a particular level. It does pre Order
-   traversal and keeps track of the current level.
-   If current level is equal to the level, it prints current node
-*/
-void printNodesAtLevel(Node* root, int currentLevel, int level) {
-    
-    if (root == NULL) {
-        return;
-    }
-    if (currentLevel == level) {
-        for (int i = 2; i < space; i++) {
-            cout << "\t";
-        }
-        space = space - 3;
-        cout << root->data;
-        return;
-    }
-
-    printNodesAtLevel(root->left, currentLevel + 1, level);
-    printNodesAtLevel(root->right, currentLevel + 1, level);
-}
-
-//Function to get height of node
-int height(Node* root)
-{
-    if(root  ==  NULL)
-			return 0;
-    return max(height(root->left),height(root->right)) + 1;
-}
-  
-    
-
-
-
 
 //Print Tree in Level Order
 void printLevelOrder(Node* root)
@@ -490,4 +421,11 @@ void printGivenLevel(Node* root, int level)
 }
 
 
+//Function to get height of node
+int height(Node* root)
+{
+    if (root == NULL)
+        return 0;
+    return max(height(root->left), height(root->right)) + 1;
+}
 
