@@ -36,6 +36,7 @@ void postorder(Node*);
 void levelOrderTraversal(Node*);
 int height(Node*);
 void printLevelOrder(Node* root);
+void printLevelOrder(Node*);
 
 
 int main() {
@@ -328,30 +329,6 @@ void constructTree(string expression) {
 
     cout << "\nPostfix: ";
     postorder(s.top());
-
-    /*while (!s.empty())
-    {
-        Node *w = s.top();
-        cout << "current node " << w->data << endl;
-
-        cout << "print left " << w->left->data << endl;
-        cout << "print right " << w->right->data << endl;
-
-        if(w->left->left !=nullptr)
-            cout << "print 2nd level left " << w->left->left->data << endl;
-
-        if (w->left->right != nullptr)
-            cout << "print 2nd level right " << w->left->right->data << endl;
-
-        if (w->right->left != nullptr)
-            cout << "print 3rd level left " << w->right->left->data << endl;
-
-        if (w->right->right != nullptr)
-            cout << "print 3rd level right " << w->right->right->data << endl;
-
-        s.pop();
-    }*/
-
 }
 
 
