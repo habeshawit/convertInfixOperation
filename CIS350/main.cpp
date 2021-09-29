@@ -3,10 +3,8 @@
 #include <stack>
 #include <string>
 #include <vector>
-#include <algorithm>
-#include <functional>
-#include <iomanip>  
-
+//#include<stdio.h>
+//#include<ctype.h>
 
 using namespace std;
 
@@ -18,7 +16,7 @@ void constructTree(string);
 void printOperations(string);
 string validate(string);
 string convertToPostFix(string);
-
+string prefix;
 
 //struct to create node for binary tree
 struct Node
@@ -27,17 +25,16 @@ struct Node
     Node* left, * right;
 };
 
-//stack to store pointers
+//stack to store pointers to node
 stack<Node*> s;
 
 void preorder(Node*);
 void inorder(Node*);
 void postorder(Node*);
-void levelOrderTraversal(Node*);
 int height(Node*);
-void printTree(Node* root);
 void printTree(Node*);
 void printCurrentLevel(Node*, int);
+double evaluateExpression(string);
 
 
 int main() {
@@ -178,10 +175,6 @@ int precedent(char charRead) {
 }
 
 
-
-
-
-
 //Function to validate if scanned expression is valid
 string validate(string expression) {
 
@@ -189,14 +182,13 @@ string validate(string expression) {
     int countOpening = count(expression.begin(), expression.end(), '(');
     int countClosing = count(expression.begin(), expression.end(), ')');
 
-    vector< int > errors;
+    vector<int> errors;
 
     //check for mismatched parenthesis error
     if (countOpening != countClosing) {
         if (!(find(errors.begin(), errors.end(), 1) != errors.end())) {
             errors.push_back(1);
         }
-        //result += "\tMismatched parenthesis\n";
     }
 
     for (int i = 0; i < expression.length(); i++) {
@@ -206,7 +198,6 @@ string validate(string expression) {
             if (!(find(errors.begin(), errors.end(), 2) != errors.end())) {
                 errors.push_back(2);
             }
-
         }
 
         //check for spacing error
@@ -307,42 +298,50 @@ void constructTree(string expression) {
         }
     }
 
-
     printTree(s.top());
 
     cout << "\nPrefix: ";
     preorder(s.top());
-
+    
     cout << "\nInfix: ";
     inorder(s.top());
 
     cout << "\nPostfix: ";
     postorder(s.top());
+
+    evaluateExpression(prefix);
+
+    //reset prefix to empty string
+    prefix = "";
 }
 
-
+/* preordertree traversal */
 void preorder(Node* ptr)
 {
     if (ptr) {
-        cout << ptr->data; // visit
-        preorder(ptr->left);// left
-        preorder(ptr->right);// right}}
+        cout << ptr->data;
+        prefix += ptr->data;
+        preorder(ptr->left);
+        preorder(ptr->right);
+    }
+
+}
+
+/* inordertree traversal */
+void inorder(Node* ptr){
+    if (ptr) {
+        inorder(ptr->left);
+        cout << ptr->data;
+        inorder(ptr->right);
     }
 }
 
-void inorder(Node* ptr)/* inordertree traversal */ {
+/* postordertree traversal */
+void postorder(Node* ptr){
     if (ptr) {
-        inorder(ptr->left);// left
-        cout << ptr->data;// visit
-        inorder(ptr->right);// right
-    }
-}
-
-void postorder(Node* ptr)/* postordertree traversal */ {
-    if (ptr) {
-        postorder(ptr->left);// left
-        postorder(ptr->right);// right
-        cout << ptr->data;// visit
+        postorder(ptr->left);
+        postorder(ptr->right);
+        cout << ptr->data;
     }
 }
 
@@ -355,36 +354,92 @@ void printTree(Node* node)
     int treeHeight = height(node);
 
     for (int i = 0; i < treeHeight; i++){
-        printCurrentLevel(node, i+1);
+        printCurrentLevel(node, i);
         cout << endl;
     }
 }
 
 
-//Print note at current level
+//Print node at current level
 void printCurrentLevel(Node* node, int level)
 {
     if (node != NULL) {
-        if (level == 1) {
+        if (level == 0) {
             cout << node->data << " ";
         }
-        else if (level > 1)
+        else if (level > 0)
         {
-            printCurrentLevel(node->left, level - 1);
-            printCurrentLevel(node->right, level - 1);
+            //recursively print left and right node, decrementing level to 0
+            printCurrentLevel(node->left, level-1);
+            printCurrentLevel(node->right, level-1);
         }
     }
     else {
         return;
     } 
+
+}
+
+//Function to get height of tree
+int height(Node* node)
+{
+    if (!node) {
+        return 0;
+    }
+
+    //get the max height between right and left subtrees, add 1 for current node
+    int treeHeight = max(height(node->left), height(node->right)) + 1;
+
+    return treeHeight;
 }
 
 
-//Function to get height of node
-int height(Node* root)
-{
-    if (root == NULL)
-        return 0;
-    return max(height(root->left), height(root->right)) + 1;
+
+double evaluateExpression(string expression) {
+    cout << "\nprefix: " << expression << endl;
+
+    stack<int> Stack;
+
+    for (int i = expression.size() - 1; i >= 0; i--) {
+        char charRead = expression[i]; 
+
+        // Push operand to Stack
+        if (isOperand(charRead))
+            //Convert numbers in expression to int by subtracting '0'
+            if (isdigit(charRead)) {
+                Stack.push(charRead - '0');
+                cout << "converted num to int " << charRead - '0' << endl;
+            }
+            //Convert alphabets in expression to int by subtracting 'A' and adding 1
+            else {
+                int convertedToInt = charRead - 'A' + 1;
+                cout << "converted alpha to int " << convertedToInt << endl;
+                Stack.push(convertedToInt);
+            }
+        else {
+            //if operator read, pop two elements from the stack
+            char oper1 = Stack.top();
+            Stack.pop();
+            char oper2 = Stack.top();
+            Stack.pop();
+
+            //Evaluate expression
+            if (charRead == '+') {
+                Stack.push(oper1 + oper2);
+            }
+            if (charRead == '-') {
+                Stack.push(oper1 - oper2);
+            }if (charRead == '*') {
+                Stack.push(oper1 * oper2);
+            }
+            if (charRead == '/') {
+                Stack.push(oper1 / oper2);
+            }
+
+        }
+    }
+
+    cout << Stack.top();
+    return Stack.top();
 }
 
