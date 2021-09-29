@@ -19,6 +19,8 @@ void printOperations(string);
 string validate(string);
 string convertToPostFix(string);
 
+
+//struct to create node for binary tree
 struct Node
 {
     char data;
