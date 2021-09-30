@@ -15,7 +15,7 @@ int precedent(char);
 void constructTree(string);
 void printOperations(string);
 
-void printOperations2(string);
+void prefixEvaluation(string);
 
 string validate(string);
 string convertToPostFix(string);
@@ -66,7 +66,8 @@ int main() {
         string validationResult;
 
         getline(inputFile, scannedExpression);
-        cout << "\n\nInput Line: #" << scannedExpression << "#" << endl;
+        cout << "\n---------------------------------------------------------------------\n\n" ;
+        cout << "Input Line: #" << scannedExpression << "#" << endl;
 
         validationResult = validate(scannedExpression);
 
@@ -315,7 +316,7 @@ void constructTree(string expression) {
 
     //evaluateExpression(prefix);
 
-    printOperations2(prefix);
+    prefixEvaluation(prefix);
 
 
     //reset prefix to empty string
@@ -484,8 +485,8 @@ int convertToDigit(char charRead) {
 }
 
 
-void printOperations2(string expression) {
-    stack<string> charStack;
+void prefixEvaluation(string expression) {
+    stack<string> stringStack;
     stack<double> sumStack;
     string operand1;
     string operand2;
@@ -493,31 +494,31 @@ void printOperations2(string expression) {
     double oper1;
     double oper2;
 
-    cout << "Operations: " << endl;
+    cout << "\nEvaluation: " << endl;
 
     for (int i = expression.length() -1; i >= 0; i--) {
         char charRead = expression[i];
 
         if (isOperand(charRead)) {
-            charStack.push(string(1, charRead));
+            stringStack.push(string(1, charRead));
 
             int digit = convertToDigit(charRead);
             sumStack.push(digit);
         }
         else if (isOperator(charRead)) {
-            operand1 = charStack.top();
-            charStack.pop();
+            operand1 = stringStack.top();
+            stringStack.pop();
 
             oper1 = sumStack.top();
             sumStack.pop();
 
-            operand2 = charStack.top();
-            charStack.pop();
+            operand2 = stringStack.top();
+            stringStack.pop();
 
             oper2 = sumStack.top();
             sumStack.pop();
 
-            charStack.push(charRead + operand1 + operand2);
+            stringStack.push(charRead + operand1 + operand2);
             cout << "\t " << charRead + operand1 + operand2;
 
             //Evaluate expression
@@ -535,5 +536,9 @@ void printOperations2(string expression) {
 
             cout << " = " << sumStack.top() << endl;
         }
+
     }
+
+    //prints result of evaluation
+    cout << "Final Result: " << sumStack.top() << endl;
 }
