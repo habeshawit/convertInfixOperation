@@ -14,6 +14,9 @@ bool isParenthesis(char);
 int precedent(char);
 void constructTree(string);
 void printOperations(string);
+
+void printOperations2(string);
+
 string validate(string);
 string convertToPostFix(string);
 string prefix;
@@ -235,7 +238,7 @@ string validate(string expression) {
     return result;
 }
 
-//Function to print operations
+//Function to print operations from postfix expression
 void printOperations(string expression) {
     stack<string> newStack;
     string operand1;
@@ -310,7 +313,10 @@ void constructTree(string expression) {
     cout << "\nPostfix: ";
     postorder(s.top());
 
-    evaluateExpression(prefix);
+    //evaluateExpression(prefix);
+
+    printOperations2(prefix);
+
 
     //reset prefix to empty string
     prefix = "";
@@ -421,17 +427,21 @@ void evaluateExpression(string expression) {
             finalExpression = charRead;
 
             double oper1 = Stack.top();
+            cout << "o " << oper1 << endl;
             Stack.pop();
 
             double oper2 = Stack.top();
+            cout << "o " << oper2 << endl;
+
             Stack.pop();
 
             for (int i = currentOperation.length()-1; i >= 0; i--) {
                 finalExpression += currentOperation[i];
             }
+            currentOperation = "";
+
 
             arr.push_back(finalExpression);
-            //finalExpression = "";
 
             //Evaluate expression
             if (charRead == '+') {
@@ -447,14 +457,12 @@ void evaluateExpression(string expression) {
             }
 
             summation.push_back(Stack.top());
-            //cout << "\nfinal" << finalExpression << endl;
 
-            currentOperation = "";
 
         }
     }
 
-    for (int i = arr.size()-2; i >=0; i--) {
+    for (int i = 0; i < arr.size() - 1; i++) {
         cout << "\t" << arr[i] << " = " << summation[i] << endl;
     }
     cout << "\t" << prefix << " = " << Stack.top() << endl;
@@ -472,5 +480,60 @@ int convertToDigit(char charRead) {
     //Convert alphabets in expression to int by subtracting 'A' and adding 1
     else {
         return charRead - 'A' + 1;
+    }
+}
+
+
+void printOperations2(string expression) {
+    stack<string> charStack;
+    stack<double> sumStack;
+    string operand1;
+    string operand2;
+
+    double oper1;
+    double oper2;
+
+    cout << "Operations: " << endl;
+
+    for (int i = expression.length() -1; i >= 0; i--) {
+        char charRead = expression[i];
+
+        if (isOperand(charRead)) {
+            charStack.push(string(1, charRead));
+
+            int digit = convertToDigit(charRead);
+            sumStack.push(digit);
+        }
+        else if (isOperator(charRead)) {
+            operand1 = charStack.top();
+            charStack.pop();
+
+            oper1 = sumStack.top();
+            sumStack.pop();
+
+            operand2 = charStack.top();
+            charStack.pop();
+
+            oper2 = sumStack.top();
+            sumStack.pop();
+
+            charStack.push(charRead + operand1 + operand2);
+            cout << "\t " << charRead + operand1 + operand2;
+
+            //Evaluate expression
+            if (charRead == '+') {
+                sumStack.push(oper1 + oper2);
+            }
+            if (charRead == '-') {
+                sumStack.push(oper1 - oper2);
+            }if (charRead == '*') {
+                sumStack.push(oper1 * oper2);
+            }
+            if (charRead == '/') {
+                sumStack.push(oper1 / oper2);
+            }
+
+            cout << " = " << sumStack.top() << endl;
+        }
     }
 }
