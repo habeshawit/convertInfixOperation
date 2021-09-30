@@ -69,14 +69,16 @@ Evaluation:
 	 +CD = 7
 	 *+CDA = 7
 	 -*+CDAG = 0
-	 /B-*+CDAG = ERROR (Division by zero not allowed)
+	 /B-*+CDAG = inf
+	 +A/B-*+CDAG = inf
+Final Result: inf
 
 ---------------------------------------------------------------------
 
 Input Line: # A + b -) D / E ( F + 4)  #
 Invalid Statement: 
 	Mismatched parenthesis
-	Invalid operator/operand 'b'
+	Invalid operand or operator
 	Spacing error
 
 ---------------------------------------------------------------------
@@ -102,19 +104,19 @@ Final Result: 9
 
 Input Line: # ( D - 3 ) * ;  #
 Invalid Statement: 
-	Invalid operator/operand ';'
+	Invalid operand or operator
 
 ---------------------------------------------------------------------
 
 Input Line: # 4 & 5 #
 Invalid Statement: 
-	Invalid operator/operand '&'
+	Invalid operand or operator
 
 ---------------------------------------------------------------------
 
 Input Line: # A#B #
 Invalid Statement: 
-	Invalid operator/operand '#'
+	Invalid operand or operator
 	Spacing error
 
 ---------------------------------------------------------------------
@@ -133,7 +135,8 @@ Prefix: /50
 Infix: 5/0
 Postfix: 50/
 Evaluation: 
-	 /50 = ERROR (Division by zero not allowed)
+	 /50 = inf
+Final Result: inf
 
 ---------------------------------------------------------------------
 
@@ -189,20 +192,14 @@ Invalid Statement:
 
 Input Line: # Cis200isfun-4 #
 Invalid Statement: 
-	Invalid operator/operand 'i'
+	Invalid operand or operator
 	Spacing error
-	Invalid operator/operand 's'
-	Invalid operator/operand 'i'
-	Invalid operator/operand 's'
-	Invalid operator/operand 'f'
-	Invalid operator/operand 'u'
-	Invalid operator/operand 'n'
 
 ---------------------------------------------------------------------
 
 Input Line: # ( D - r ) A * C #
 Invalid Statement: 
-	Invalid operator/operand 'r'
+	Invalid operand or operator
 
 ---------------------------------------------------------------------
 

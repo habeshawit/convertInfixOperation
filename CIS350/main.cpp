@@ -3,8 +3,6 @@
 #include <stack>
 #include <string>
 #include <vector>
-//#include<stdio.h>
-//#include<ctype.h>
 
 using namespace std;
 
@@ -12,11 +10,14 @@ bool isOperand(char);
 bool isOperator(char);
 bool isParenthesis(char);
 int precedent(char);
-void constructTree(string);
-void printOperations(string);
+void constructTree(string, ofstream&);
+void printOperations(string, ofstream&);
+void prefixEvaluation(string, ofstream&);
+
 string validate(string);
-string convertToPostFix(string);
+string convertToPostFix(string, ofstream&);
 string prefix;
+int convertToDigit(char);
 
 //struct to create node for binary tree
 struct Node
@@ -28,33 +29,45 @@ struct Node
 //stack to store pointers to node
 stack<Node*> s;
 
-void preorder(Node*);
-void inorder(Node*);
-void postorder(Node*);
+void preorder(Node*, ofstream&);
+void inorder(Node*, ofstream&);
+void postorder(Node*, ofstream&);
 int height(Node*);
-void printTree(Node*);
-void printCurrentLevel(Node*, int);
-double evaluateExpression(string);
-
+void printTree(Node*, ofstream&);
+void printCurrentLevel(Node*, int, ofstream&);
 
 int main() {
-    string inputFileName = "file.txt";
-    string outputFileName = "out.txt";
+
     string postFix;
     string scannedExpression;
 
-    //cout << "Welcome! Enter the name of the file you would like to open: ";
-    //cin >> inputFileName;
+    string inputFileName;
+    string outputFileName;
 
-    //cout << "\nEnter the name of the output file: ";
-    //cin >> outputFileName;
+    cout << "Welcome! Enter the name of the file you would like to open: ";
+    cin >> inputFileName;
+
+    cout << "\nEnter the name of the output file: ";
+    cin >> outputFileName;
 
     //Read from input file & check for file errors
     ifstream inputFile(inputFileName);
     ofstream outputFile(outputFileName);
+    
+    if (inputFile.fail()) {
+        outputFile << "\nERROR: Cannot read input from file." << endl;
+        cout << "\nERROR: Cannot read input from file." << endl;
+        return 0;
+    } 
+    else if (inputFile.peek() == EOF) {
+        outputFile << "\n Input file is empty" << endl;
+        cout << "\n Input file is empty" << endl;
 
-    cout << "Program reading from " << inputFileName << endl;
-    outputFile << "Program reading from " << inputFileName << endl;
+        return 0;
+    }
+
+    outputFile << "\nProgram reading from " << inputFileName << endl;
+    cout << "\nProgram reading from " << inputFileName << endl;
 
     while (!inputFile.eof())
     {
@@ -62,17 +75,22 @@ int main() {
         string validationResult;
 
         getline(inputFile, scannedExpression);
-        cout << "\n\nInput Line: #" << scannedExpression << "#" << endl;
+        outputFile << "\n---------------------------------------------------------------------\n\n";
+        cout << "\n---------------------------------------------------------------------\n\n" ;
+        outputFile << "Input Line: #" << scannedExpression << "#" << endl;
+        cout << "Input Line: #" << scannedExpression << "#" << endl;
 
         validationResult = validate(scannedExpression);
 
         if (validationResult == "Valid Statement") {
+            outputFile << validationResult << endl;
             cout << validationResult << endl;
-            postFix = convertToPostFix(scannedExpression);
-            printOperations(postFix);
-            constructTree(postFix);
+            postFix = convertToPostFix(scannedExpression, outputFile);
+            printOperations(postFix, outputFile);
+            constructTree(postFix, outputFile);
         } 
         else {
+            outputFile << validationResult;
             cout << validationResult;
         }
 
@@ -82,7 +100,7 @@ int main() {
 }
 
 //Function to convert infix expression to postfix
-string convertToPostFix(string scannedExpression) {
+string convertToPostFix(string scannedExpression, ofstream& outputFile) {
     stack <char> myStack;
     string postFix;
 
@@ -129,6 +147,7 @@ string convertToPostFix(string scannedExpression) {
         myStack.pop();
     }
 
+    outputFile << "Postfix Expresssion: " << postFix << endl;
     cout << "Postfix Expresssion: " << postFix << endl;
     return postFix;
 }
@@ -186,7 +205,9 @@ string validate(string expression) {
 
     //check for mismatched parenthesis error
     if (countOpening != countClosing) {
+        //if not already in error vector, push error 1 (parenthesis mismatched) to errors vector
         if (!(find(errors.begin(), errors.end(), 1) != errors.end())) {
+            result += "\tMismatched parenthesis\n";
             errors.push_back(1);
         }
     }
@@ -195,51 +216,51 @@ string validate(string expression) {
 
         //check for invalid operand or operator
         if (isOperand(expression[i])== false && isOperator(expression[i]) == false && isParenthesis(expression[i]) == false && !isblank(expression[i])) {
-            if (!(find(errors.begin(), errors.end(), 2) != errors.end())) {
+            //add error 2 (invalid operand/operator) to results with piece of data causing error
+                result += "\tInvalid operator/operand '" +  string(1, expression[i]) + "'\n";
                 errors.push_back(2);
-            }
         }
 
         //check for spacing error
+        //if every even spot is not an empty space, return error 3 (spacing error)
         if (i % 2 == 0) {
             if (!isblank(expression[i]) ){
                 if (!(find(errors.begin(), errors.end(), 3) != errors.end())) {
+                    result += "\tSpacing error\n";
                     errors.push_back(3);
                 }
             }
         }
+
+        //check for inaccurate use of parenthesis
+        if (isOperator(expression[i])) {
+            if ((expression[i + 2] && expression[i + 2] == ')') || (expression[i - 2] && expression[i - 2] == '(')) {
+                if (!(find(errors.begin(), errors.end(), 4) != errors.end())) {
+                    result += "\tInaccurate use of parenthesis\n";
+                    errors.push_back(4);
+                }
+            }
+            
+        }
     }
 
     //check errors vector for all errors detected
+    //if no error detected return 'Valid Statement'
     if (errors.size() == 0) {
         result = "Valid Statement";
     }
-    else {
-        for (int i = 0; i < errors.size(); i++) {
-            switch (errors.at(i)) {
-            case 1:
-                result += "\tMismatched parenthesis\n";
-                break;
-            case 2:
-                result += "\tInvalid operand or operator\n";
-                break;
-            case 3:
-                result += "\tSpacing error\n";
-                break;
-            }
-        }
 
-    }
 
     return result;
 }
 
-//Function to print operations
-void printOperations(string expression) {
+//Function to print operations from postfix expression
+void printOperations(string expression, ofstream& outputFile) {
     stack<string> newStack;
     string operand1;
     string operand2;
 
+    outputFile << "Operations: " << endl;
     cout << "Operations: " << endl;
 
     for (int i = 0; i < expression.length(); i++) {
@@ -249,19 +270,29 @@ void printOperations(string expression) {
             newStack.push(string(1, charRead));
         }
         else if (isOperator(charRead)) {
-            operand1 = newStack.top();
-            newStack.pop();
+            if (!newStack.empty()) {
+                operand1 = newStack.top();
+                newStack.pop();
+            }
+            
+            if (!newStack.empty()) {
+                operand2 = newStack.top();
+                newStack.pop();
+                
+                newStack.push(operand2 + operand1 + charRead);
+                outputFile << "\t " << operand2 + operand1 + charRead << endl;
+                cout << "\t " << operand2 + operand1 + charRead << endl;
+            } 
+            else {
+                outputFile << "Invalid Statement: \n\t Illegal parenthesis use\n";
+                cout << "Invalid Statement: \n\t Illegal parenthesis use\n";
+            }
 
-            operand2 = newStack.top();
-            newStack.pop();
-
-            newStack.push(operand2 + operand1 + charRead);
-            cout << "\t " << operand2 + operand1 + charRead << endl;
         }
     }
 }
 
-void constructTree(string expression) {
+void constructTree(string expression, ofstream& outputFile) {
 
     for (int i = 0; i < expression.length(); i++) { 
         char charRead = expression[i];
@@ -294,84 +325,94 @@ void constructTree(string expression) {
 
             //add subtree to stack
             s.push(node);
-
         }
     }
 
-    printTree(s.top());
+    printTree(s.top(), outputFile);
 
+    outputFile << "\nPrefix: ";
     cout << "\nPrefix: ";
-    preorder(s.top());
+    preorder(s.top(), outputFile);
     
+    outputFile << "\nInfix: ";
     cout << "\nInfix: ";
-    inorder(s.top());
+    inorder(s.top(), outputFile);
 
+    outputFile << "\nPostfix: ";
     cout << "\nPostfix: ";
-    postorder(s.top());
+    postorder(s.top(), outputFile);
 
-    evaluateExpression(prefix);
+    prefixEvaluation(prefix, outputFile);
 
     //reset prefix to empty string
     prefix = "";
 }
 
 /* preordertree traversal */
-void preorder(Node* ptr)
+void preorder(Node* ptr, ofstream& outputFile)
 {
     if (ptr) {
+        outputFile << ptr->data;
         cout << ptr->data;
         prefix += ptr->data;
-        preorder(ptr->left);
-        preorder(ptr->right);
+        preorder(ptr->left, outputFile);
+        preorder(ptr->right, outputFile);
     }
 
 }
 
 /* inordertree traversal */
-void inorder(Node* ptr){
+void inorder(Node* ptr, ofstream& outputFile){
     if (ptr) {
-        inorder(ptr->left);
+        inorder(ptr->left, outputFile);
+        outputFile << ptr->data;
         cout << ptr->data;
-        inorder(ptr->right);
+        inorder(ptr->right, outputFile);
     }
 }
 
 /* postordertree traversal */
-void postorder(Node* ptr){
+void postorder(Node* ptr, ofstream& outputFile){
     if (ptr) {
-        postorder(ptr->left);
-        postorder(ptr->right);
+        postorder(ptr->left, outputFile);
+        postorder(ptr->right, outputFile);
+        outputFile << ptr->data;
         cout << ptr->data;
     }
 }
 
 
 //Print Tree in Level Order
-void printTree(Node* node)
+void printTree(Node* node, ofstream& outputFile)
 {
-    cout << "\nPrinting tree top to bottom" << endl;
+    outputFile << "\nTree: " << endl;
+    cout << "\nTree: " << endl;
 
     int treeHeight = height(node);
 
     for (int i = 0; i < treeHeight; i++){
-        printCurrentLevel(node, i);
+        outputFile << "\t";
+        cout << "\t";
+        printCurrentLevel(node, i, outputFile);
+        outputFile << endl;
         cout << endl;
     }
 }
 
 
 //Print node at current level
-void printCurrentLevel(Node* node, int level)
+void printCurrentLevel(Node* node, int level, ofstream& outputFile)
 {
     if (node != NULL) {
         if (level == 0) {
+            outputFile << node->data << " ";
             cout << node->data << " ";
         }
         else if (level > 0)
         {
             //recursively print left and right node, decrementing level to 0
-            printCurrentLevel(node->left, level-1);
-            printCurrentLevel(node->right, level-1);
+            printCurrentLevel(node->left, level-1, outputFile);
+            printCurrentLevel(node->right, level-1, outputFile);
         }
     }
     else {
@@ -395,51 +436,81 @@ int height(Node* node)
 
 
 
-double evaluateExpression(string expression) {
-    cout << "\nprefix: " << expression << endl;
+int convertToDigit(char charRead) {
+    //Convert numbers in expression to int by subtracting '0'
+    if (isdigit(charRead)) {
+        return charRead - '0';
+    }
+    //Convert alphabets in expression to int by subtracting 'A' and adding 1
+    else {
+        return charRead - 'A' + 1;
+    }
+}
 
-    stack<int> Stack;
 
-    for (int i = expression.size() - 1; i >= 0; i--) {
-        char charRead = expression[i]; 
+void prefixEvaluation(string expression, ofstream& outputFile) {
+    stack<string> stringStack;
+    stack<double> sumStack;
+    string operand1;
+    string operand2;
 
-        // Push operand to Stack
-        if (isOperand(charRead))
-            //Convert numbers in expression to int by subtracting '0'
-            if (isdigit(charRead)) {
-                Stack.push(charRead - '0');
-                cout << "converted num to int " << charRead - '0' << endl;
-            }
-            //Convert alphabets in expression to int by subtracting 'A' and adding 1
-            else {
-                int convertedToInt = charRead - 'A' + 1;
-                cout << "converted alpha to int " << convertedToInt << endl;
-                Stack.push(convertedToInt);
-            }
-        else {
-            //if operator read, pop two elements from the stack
-            char oper1 = Stack.top();
-            Stack.pop();
-            char oper2 = Stack.top();
-            Stack.pop();
+    double oper1;
+    double oper2;
+
+    outputFile << "\nEvaluation: " << endl;
+    cout << "\nEvaluation: " << endl;
+
+    for (int i = expression.length() -1; i >= 0; i--) {
+        char charRead = expression[i];
+
+        if (isOperand(charRead)) {
+            stringStack.push(string(1, charRead));
+
+            int digit = convertToDigit(charRead);
+            sumStack.push(digit);
+        }
+        else if (isOperator(charRead)) {
+            operand1 = stringStack.top();
+            stringStack.pop();
+
+            oper1 = sumStack.top();
+            sumStack.pop();
+
+            operand2 = stringStack.top();
+            stringStack.pop();
+
+            oper2 = sumStack.top();
+            sumStack.pop();
+
+            stringStack.push(charRead + operand1 + operand2);
+            outputFile << "\t " << charRead + operand1 + operand2;
+            cout << "\t " << charRead + operand1 + operand2;
 
             //Evaluate expression
             if (charRead == '+') {
-                Stack.push(oper1 + oper2);
+                sumStack.push(oper1 + oper2);
             }
             if (charRead == '-') {
-                Stack.push(oper1 - oper2);
+                sumStack.push(oper1 - oper2);
             }if (charRead == '*') {
-                Stack.push(oper1 * oper2);
+                sumStack.push(oper1 * oper2);
             }
             if (charRead == '/') {
-                Stack.push(oper1 / oper2);
+                if (oper2 == 0) {
+                    cout << " = ERROR (Division by zero not allowed)" << endl;
+                    outputFile << " = ERROR (Division by zero not allowed)" << endl;
+                    return;
+                }
+                sumStack.push(oper1 / oper2);
             }
 
+            outputFile << " = " << sumStack.top() << endl;
+            cout << " = " << sumStack.top() << endl;
         }
+
     }
 
-    cout << Stack.top();
-    return Stack.top();
+    //prints result of evaluation
+    outputFile << "Final Result: " << sumStack.top() << endl;
+    cout << "Final Result: " << sumStack.top() << endl;
 }
-

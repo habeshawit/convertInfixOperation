@@ -191,12 +191,6 @@ Input Line: # Cis200isfun-4 #
 Invalid Statement: 
 	Invalid operator/operand 'i'
 	Spacing error
-	Invalid operator/operand 's'
-	Invalid operator/operand 'i'
-	Invalid operator/operand 's'
-	Invalid operator/operand 'f'
-	Invalid operator/operand 'u'
-	Invalid operator/operand 'n'
 
 ---------------------------------------------------------------------
 
