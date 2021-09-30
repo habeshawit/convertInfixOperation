@@ -5,14 +5,11 @@ Program reading from statements1.dat
 
 Input Line: # (((A + B))))) #
 Invalid Statement: 
-	Mismatched parenthesis
-	Spacing error
 
 ---------------------------------------------------------------------
 
 Input Line: # (A + B * C) / ((A - B) * C) #
 Invalid Statement: 
-	Spacing error
 
 ---------------------------------------------------------------------
 
@@ -40,7 +37,6 @@ Final Result: 601
 
 Input Line: # ( A + B ) / C + (D - E ) * F * ( G - H )  #
 Invalid Statement: 
-	Spacing error
 
 ---------------------------------------------------------------------
 
@@ -75,9 +71,6 @@ Evaluation:
 
 Input Line: # A + b -) D / E ( F + 4)  #
 Invalid Statement: 
-	Mismatched parenthesis
-	Invalid operator/operand 'b'
-	Spacing error
 
 ---------------------------------------------------------------------
 
@@ -102,20 +95,16 @@ Final Result: 9
 
 Input Line: # ( D - 3 ) * ;  #
 Invalid Statement: 
-	Invalid operator/operand ';'
 
 ---------------------------------------------------------------------
 
 Input Line: # 4 & 5 #
 Invalid Statement: 
-	Invalid operator/operand '&'
 
 ---------------------------------------------------------------------
 
 Input Line: # A#B #
 Invalid Statement: 
-	Invalid operator/operand '#'
-	Spacing error
 
 ---------------------------------------------------------------------
 
@@ -177,32 +166,21 @@ Final Result: -1
 
 Input Line: # ( A + ) B #
 Invalid Statement: 
-	Inaccurate use of parenthesis
 
 ---------------------------------------------------------------------
 
 Input Line: # A + ( F - ) D #
 Invalid Statement: 
-	Inaccurate use of parenthesis
 
 ---------------------------------------------------------------------
 
 Input Line: # Cis200isfun-4 #
 Invalid Statement: 
-	Invalid operator/operand 'i'
-	Spacing error
-	Invalid operator/operand 's'
-	Invalid operator/operand 'i'
-	Invalid operator/operand 's'
-	Invalid operator/operand 'f'
-	Invalid operator/operand 'u'
-	Invalid operator/operand 'n'
 
 ---------------------------------------------------------------------
 
 Input Line: # ( D - r ) A * C #
 Invalid Statement: 
-	Invalid operator/operand 'r'
 
 ---------------------------------------------------------------------
 
