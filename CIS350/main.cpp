@@ -17,6 +17,7 @@ void printOperations(string);
 string validate(string);
 string convertToPostFix(string);
 string prefix;
+int convertToDigit(char);
 
 //struct to create node for binary tree
 struct Node
@@ -34,7 +35,8 @@ void postorder(Node*);
 int height(Node*);
 void printTree(Node*);
 void printCurrentLevel(Node*, int);
-double evaluateExpression(string);
+//void evaluateExpression(string);
+void evaluatePrefix(Node* ptr);
 
 
 int main() {
@@ -309,7 +311,8 @@ void constructTree(string expression) {
     cout << "\nPostfix: ";
     postorder(s.top());
 
-    evaluateExpression(prefix);
+    //evaluateExpression(prefix);
+    evaluatePrefix(s.top());
 
     //reset prefix to empty string
     prefix = "";
@@ -349,11 +352,12 @@ void postorder(Node* ptr){
 //Print Tree in Level Order
 void printTree(Node* node)
 {
-    cout << "\nPrinting tree top to bottom" << endl;
+    cout << "\nTree: " << endl;
 
     int treeHeight = height(node);
 
     for (int i = 0; i < treeHeight; i++){
+        cout << "\t";
         printCurrentLevel(node, i);
         cout << endl;
     }
@@ -394,52 +398,112 @@ int height(Node* node)
 }
 
 
+void evaluateExpression(Node *tree) {
+    //Traverse tree in preorder and evaluate expressions
 
-double evaluateExpression(string expression) {
-    cout << "\nprefix: " << expression << endl;
+    evaluatePrefix(tree);
 
-    stack<int> Stack;
-
-    for (int i = expression.size() - 1; i >= 0; i--) {
-        char charRead = expression[i]; 
-
-        // Push operand to Stack
-        if (isOperand(charRead))
-            //Convert numbers in expression to int by subtracting '0'
-            if (isdigit(charRead)) {
-                Stack.push(charRead - '0');
-                cout << "converted num to int " << charRead - '0' << endl;
-            }
-            //Convert alphabets in expression to int by subtracting 'A' and adding 1
-            else {
-                int convertedToInt = charRead - 'A' + 1;
-                cout << "converted alpha to int " << convertedToInt << endl;
-                Stack.push(convertedToInt);
-            }
-        else {
-            //if operator read, pop two elements from the stack
-            char oper1 = Stack.top();
-            Stack.pop();
-            char oper2 = Stack.top();
-            Stack.pop();
-
-            //Evaluate expression
-            if (charRead == '+') {
-                Stack.push(oper1 + oper2);
-            }
-            if (charRead == '-') {
-                Stack.push(oper1 - oper2);
-            }if (charRead == '*') {
-                Stack.push(oper1 * oper2);
-            }
-            if (charRead == '/') {
-                Stack.push(oper1 / oper2);
-            }
-
-        }
-    }
-
-    cout << Stack.top();
-    return Stack.top();
 }
 
+
+//void evaluateExpression(string expression) {
+//    cout << "\nEvaluations: " << endl;
+//
+//    stack<double> Stack;
+//    string finalExpression = "";
+//    string currentOperation = "";
+//    vector< string > arr;
+//    vector< int > summation;
+//
+//
+//
+//    int tempSum = 0;
+//
+//    for (int i = expression.size() - 1; i >= 0; i--) {
+//        char charRead = expression[i]; 
+//       
+//
+//        // Push operand to Stack
+//        if (isOperand(charRead)) {
+//            int digit = convertToDigit(charRead);
+//            Stack.push(digit);
+//            currentOperation += charRead;
+//        }  
+//        else {
+//            //Save the operator into finalExpression variable for later use
+//            finalExpression = charRead;
+//
+//            //if operator read, pop two elements from the stack
+//
+//            double oper1 = Stack.top();
+//            Stack.pop();
+//
+//            double oper2 = Stack.top();
+//            Stack.pop();
+//
+//
+//            //iterate backwards to reverse current operation eg. DC to CD and concatinate to finalExpression (eg. DC to -CD)
+//            for (int i = currentOperation.length()-1; i >= 0; i--) {
+//                finalExpression += currentOperation[i];
+//            }
+//
+//            //save updated individual operations in vector for later use
+//            arr.push_back(finalExpression);
+//
+//            //Evaluate expression
+//            if (charRead == '+') {
+//                Stack.push(oper1 + oper2);
+//                summation.push_back(oper1 + oper2);
+//            }
+//            if (charRead == '-') {
+//                Stack.push(oper1 - oper2);
+//                summation.push_back(oper1 - oper2);
+//            }if (charRead == '*') {
+//                Stack.push(oper1 * oper2);
+//                summation.push_back(oper1 * oper2);
+//            }
+//            if (charRead == '/') {
+//                Stack.push(oper1 / oper2);
+//                summation.push_back(oper1 / oper2);
+//
+//            }
+//
+//            //Reset current operation variable
+//            currentOperation = "";
+//        }
+//        
+//    }
+//
+//    //Print individual operations 
+//    for (int i = arr.size()-2; i >=0; i--) {
+//        cout << arr[i] << " = " << summation[i] << endl;
+//    }
+//    cout << expression << " = " << Stack.top() << endl;
+//
+//    //prints final result of evaluation
+//    cout << "\nFinal Result: " << Stack.top() << endl;
+//
+//}
+
+
+int convertToDigit(char charRead) {
+    //Convert numbers in expression to int by subtracting '0'
+    if (isdigit(charRead)) {
+        return charRead - '0';
+    }
+    //Convert alphabets in expression to int by subtracting 'A' and adding 1
+    else {
+        return charRead - 'A' + 1;
+    }
+}
+
+
+void evaluatePrefix(Node* ptr) {
+    cout << "e " << endl;
+    if (ptr) {
+        cout << ptr->left->data;
+        prefix += ptr->data;
+        evaluatePrefix(ptr->left);
+        evaluatePrefix(ptr->right);
+    }
+}
