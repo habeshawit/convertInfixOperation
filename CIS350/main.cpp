@@ -3,8 +3,6 @@
 #include <stack>
 #include <string>
 #include <vector>
-//#include<stdio.h>
-//#include<ctype.h>
 
 using namespace std;
 
@@ -42,20 +40,29 @@ void evaluateExpression(string);
 
 
 int main() {
-    string inputFileName = "file.txt";
-    string outputFileName = "out.txt";
+    string inputFileName;
+    string outputFileName;
     string postFix;
     string scannedExpression;
 
-    //cout << "Welcome! Enter the name of the file you would like to open: ";
-    //cin >> inputFileName;
+    cout << "Welcome! Enter the name of the file you would like to open: ";
+    cin >> inputFileName;
 
-    //cout << "\nEnter the name of the output file: ";
-    //cin >> outputFileName;
+    cout << "\nEnter the name of the output file: ";
+    cin >> outputFileName;
 
     //Read from input file & check for file errors
     ifstream inputFile(inputFileName);
     ofstream outputFile(outputFileName);
+    
+    if (inputFile.fail()) {
+        cout << "\nERROR: Cannot read input from file." << endl;
+        return 0;
+    } 
+    else if (inputFile.peek() == EOF) {
+        cout << "\n Input file is empty" << endl;
+        return 0;
+    }
 
     cout << "Program reading from " << inputFileName << endl;
     outputFile << "Program reading from " << inputFileName << endl;
@@ -299,7 +306,6 @@ void constructTree(string expression) {
 
             //add subtree to stack
             s.push(node);
-
         }
     }
 
@@ -314,10 +320,7 @@ void constructTree(string expression) {
     cout << "\nPostfix: ";
     postorder(s.top());
 
-    //evaluateExpression(prefix);
-
     prefixEvaluation(prefix);
-
 
     //reset prefix to empty string
     prefix = "";
