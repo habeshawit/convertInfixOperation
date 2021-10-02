@@ -1,0 +1,168 @@
+
+Successfully opened input file: 'statements3.dat'
+
+---------------------------------------------------------------------
+
+Input Line: # ( A + B ) * ( C + D ) #
+Valid Statement
+Postfix Expresssion: AB+CD+*
+Operations: 
+	 AB+
+	 CD+
+	 AB+CD+*
+
+Tree: 
+	* 
+	+ + 
+	A B C D 
+
+Prefix: *+AB+CD
+Infix: A+B*C+D
+Postfix: AB+CD+*
+Evaluation: 
+	 +CD = 7
+	 +AB = 3
+	 *+AB+CD = 21
+Final Result: 21
+
+---------------------------------------------------------------------
+
+Input Line: # A * B + C * D #
+Valid Statement
+Postfix Expresssion: AB*CD*+
+Operations: 
+	 AB*
+	 CD*
+	 AB*CD*+
+
+Tree: 
+	+ 
+	* * 
+	A B C D 
+
+Prefix: +*AB*CD
+Infix: A*B+C*D
+Postfix: AB*CD*+
+Evaluation: 
+	 *CD = 12
+	 *AB = 2
+	 +*AB*CD = 14
+Final Result: 14
+
+---------------------------------------------------------------------
+
+Input Line: # ( A - B ) - ( C - D )  #
+Valid Statement
+Postfix Expresssion: AB-CD--
+Operations: 
+	 AB-
+	 CD-
+	 AB-CD--
+
+Tree: 
+	- 
+	- - 
+	A B C D 
+
+Prefix: --AB-CD
+Infix: A-B-C-D
+Postfix: AB-CD--
+Evaluation: 
+	 -CD = -1
+	 -AB = -1
+	 --AB-CD = 0
+Final Result: 0
+
+---------------------------------------------------------------------
+
+Input Line: # A * B + C / D #
+Valid Statement
+Postfix Expresssion: AB*CD/+
+Operations: 
+	 AB*
+	 CD/
+	 AB*CD/+
+
+Tree: 
+	+ 
+	* / 
+	A B C D 
+
+Prefix: +*AB/CD
+Infix: A*B+C/D
+Postfix: AB*CD/+
+Evaluation: 
+	 /CD = 0.75
+	 *AB = 2
+	 +*AB/CD = 2.75
+Final Result: 2.75
+
+---------------------------------------------------------------------
+
+Input Line: # A * ( B + C ) / D #
+Valid Statement
+Postfix Expresssion: ABC+D/*
+Operations: 
+	 BC+
+	 BC+D/
+	 ABC+D/*
+
+Tree: 
+	* 
+	A / 
+	+ D 
+	B C 
+
+Prefix: *A/+BCD
+Infix: A*B+C/D
+Postfix: ABC+D/*
+Evaluation: 
+	 +BC = 5
+	 /+BCD = 1.25
+	 *A/+BCD = 1.25
+Final Result: 1.25
+
+---------------------------------------------------------------------
+
+Input Line: # A * ( B + C / D ) #
+Valid Statement
+Postfix Expresssion: ABCD/+*
+Operations: 
+	 CD/
+	 BCD/+
+	 ABCD/+*
+
+Tree: 
+	* 
+	A + 
+	B / 
+	C D 
+
+Prefix: *A+B/CD
+Infix: A*B+C/D
+Postfix: ABCD/+*
+Evaluation: 
+	 /CD = 0.75
+	 +B/CD = 2.75
+	 *A+B/CD = 2.75
+Final Result: 2.75
+
+---------------------------------------------------------------------
+
+Input Line: # a * ( B + & / # ) #
+Invalid Statement: 
+	Invalid operator/operand 'a'
+	Invalid operator/operand '&'
+	Invalid operator/operand '#'
+
+---------------------------------------------------------------------
+
+Input Line: # ( * a + B ) * (X - )) ^ 2#
+Invalid Statement: 
+	Mismatched parenthesis
+	Inaccurate use of parenthesis
+	Invalid operator/operand 'a'
+	Spacing error
+	Invalid operator/operand '^'
+
+Program completed.

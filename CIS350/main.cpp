@@ -1,3 +1,8 @@
+//Program Name: EvaluateInfixOperations
+//Programmer Name: Shalom Kebede
+//Description: Given a file with infix expressions, the program will create and traverse trees in prefix, infix and postfix order. It will evaluate the expression from the prefix notation and print to the screen the result of the traversal or print error messages as appropriate. 
+//Date Created: Sep 18, 2021
+
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -13,7 +18,6 @@ int precedent(char);
 void constructTree(string, ofstream&);
 void printOperations(string, ofstream&);
 void prefixEvaluation(string, ofstream&);
-
 string validate(string);
 string convertToPostFix(string, ofstream&);
 string prefix;
@@ -55,19 +59,19 @@ int main() {
     ofstream outputFile(outputFileName);
     
     if (inputFile.fail()) {
-        outputFile << "\nERROR: Cannot read input from file." << endl;
-        cout << "\nERROR: Cannot read input from file." << endl;
+        outputFile << "\n ERROR: Cannot read input from file." << endl;
+        cout << "\n ERROR: Cannot read input from file." << endl;
         return 0;
     } 
     else if (inputFile.peek() == EOF) {
-        outputFile << "\n Input file is empty" << endl;
-        cout << "\n Input file is empty" << endl;
+        outputFile << "\n ERROR: Input file is empty" << endl;
+        cout << "\n ERROR: Input file is empty" << endl;
 
         return 0;
     }
 
-    outputFile << "\nProgram reading from " << inputFileName << endl;
-    cout << "\nProgram reading from " << inputFileName << endl;
+    cout << "\nSuccessfully opened input file: '" << inputFileName << "'" << endl;
+    outputFile << "\nSuccessfully opened input file: '" << inputFileName << "'" << endl;
 
     while (!inputFile.eof())
     {
@@ -96,10 +100,77 @@ int main() {
 
     }
 
+    cout << "\nProgram completed.\n";
+    outputFile << "\nProgram completed.\n";
     return 0;
 }
 
-//Function to convert infix expression to postfix
+
+
+//Description: Function to validate if scanned expression is valid
+//Pre-condition: infix expression (string)
+//Post-condition: Returns result of validation
+string validate(string expression) {
+
+    string result = "Invalid Statement: \n";
+    int countOpening = count(expression.begin(), expression.end(), '(');
+    int countClosing = count(expression.begin(), expression.end(), ')');
+
+    vector<int> errors;
+
+    //check for mismatched parenthesis error
+    if (countOpening != countClosing) {
+        //if not already in error vector, push error 1 (parenthesis mismatched) to errors vector
+        if (!(find(errors.begin(), errors.end(), 1) != errors.end())) {
+            result += "\tMismatched parenthesis\n";
+            errors.push_back(1);
+        }
+    }
+
+    for (int i = 0; i < expression.length(); i++) {
+
+        //check for invalid operand or operator
+        if (isOperand(expression[i]) == false && isOperator(expression[i]) == false && isParenthesis(expression[i]) == false && !isblank(expression[i])) {
+            //add error 2 (invalid operand/operator) to results with piece of data causing error
+            result += "\tInvalid operator/operand '" + string(1, expression[i]) + "'\n";
+            errors.push_back(2);
+        }
+
+        //check for spacing error
+        //if every even spot is not an empty space, return error 3 (spacing error)
+        if (i % 2 == 0) {
+            if (!isblank(expression[i])) {
+                if (!(find(errors.begin(), errors.end(), 3) != errors.end())) {
+                    result += "\tSpacing error\n";
+                    errors.push_back(3);
+                }
+            }
+        }
+
+        //check for inaccurate use of parenthesis
+        if (isOperator(expression[i])) {
+            if ((expression[i + 2] && expression[i + 2] == ')') || (expression[i - 2] && expression[i - 2] == '(')) {
+                if (!(find(errors.begin(), errors.end(), 4) != errors.end())) {
+                    result += "\tInaccurate use of parenthesis\n";
+                    errors.push_back(4);
+                }
+            }
+
+        }
+    }
+
+    //check errors vector for all errors detected
+    //if no error detected return 'Valid Statement'
+    if (errors.size() == 0) {
+        result = "Valid Statement";
+    }
+
+    return result;
+}
+
+//Description: Function to convert infix expression to postfix
+//Pre-condition: infix expression (string), output file 
+//Post-condition: Returns post fix expression (string)
 string convertToPostFix(string scannedExpression, ofstream& outputFile) {
     stack <char> myStack;
     string postFix;
@@ -152,7 +223,9 @@ string convertToPostFix(string scannedExpression, ofstream& outputFile) {
     return postFix;
 }
 
-//Function to check if scanned character is an operand
+//Description: Function to check if scanned character is an operand
+//Pre-condition: input is char
+//Post-condition: returns true if char is operand, false otherwise
 bool isOperand(char charRead) {
     if ((charRead >= 'A' && charRead <= 'Z') || (charRead >= '0' && charRead <= '9')) {
         return true;
@@ -162,7 +235,9 @@ bool isOperand(char charRead) {
     }
 }
 
-//Function to check if scanned character is an operator
+//Description: Function to check if scanned character is an operator
+//Pre-condition: input is char
+//Post-condition: returns true if char is operand, false otherwise
 bool isOperator(char charRead) {
     if ((charRead == '*') || (charRead == '/') || (charRead == '+') || (charRead == '-')) {
         return true;
@@ -172,7 +247,9 @@ bool isOperator(char charRead) {
     }
 }
 
-//Function to check if scanned character is a parenthesis
+//Description: Function to check if scanned character is an parenthesis
+//Pre-condition: input is char
+//Post-condition: returns true if char is operand, false otherwise
 bool isParenthesis(char charRead) {
     if (charRead == '(' || charRead == ')')
         return true;
@@ -180,7 +257,9 @@ bool isParenthesis(char charRead) {
         return false;
 }
 
-//Function to check the precendence of scanned character
+//Description: Function to check the precendence of scanned character
+//Pre-condition: input is char
+//Post-condition: returns higher precedent if char red is * or /
 int precedent(char charRead) {
     if (charRead == '*' || charRead == '/') {
         return 2;
@@ -193,68 +272,9 @@ int precedent(char charRead) {
     }
 }
 
-
-//Function to validate if scanned expression is valid
-string validate(string expression) {
-
-    string result = "Invalid Statement: \n";
-    int countOpening = count(expression.begin(), expression.end(), '(');
-    int countClosing = count(expression.begin(), expression.end(), ')');
-
-    vector<int> errors;
-
-    //check for mismatched parenthesis error
-    if (countOpening != countClosing) {
-        //if not already in error vector, push error 1 (parenthesis mismatched) to errors vector
-        if (!(find(errors.begin(), errors.end(), 1) != errors.end())) {
-            result += "\tMismatched parenthesis\n";
-            errors.push_back(1);
-        }
-    }
-
-    for (int i = 0; i < expression.length(); i++) {
-
-        //check for invalid operand or operator
-        if (isOperand(expression[i])== false && isOperator(expression[i]) == false && isParenthesis(expression[i]) == false && !isblank(expression[i])) {
-            //add error 2 (invalid operand/operator) to results with piece of data causing error
-                result += "\tInvalid operator/operand '" +  string(1, expression[i]) + "'\n";
-                errors.push_back(2);
-        }
-
-        //check for spacing error
-        //if every even spot is not an empty space, return error 3 (spacing error)
-        if (i % 2 == 0) {
-            if (!isblank(expression[i]) ){
-                if (!(find(errors.begin(), errors.end(), 3) != errors.end())) {
-                    result += "\tSpacing error\n";
-                    errors.push_back(3);
-                }
-            }
-        }
-
-        //check for inaccurate use of parenthesis
-        if (isOperator(expression[i])) {
-            if ((expression[i + 2] && expression[i + 2] == ')') || (expression[i - 2] && expression[i - 2] == '(')) {
-                if (!(find(errors.begin(), errors.end(), 4) != errors.end())) {
-                    result += "\tInaccurate use of parenthesis\n";
-                    errors.push_back(4);
-                }
-            }
-            
-        }
-    }
-
-    //check errors vector for all errors detected
-    //if no error detected return 'Valid Statement'
-    if (errors.size() == 0) {
-        result = "Valid Statement";
-    }
-
-
-    return result;
-}
-
-//Function to print operations from postfix expression
+//Description: Function to print operations from postfix expression
+//Pre-condition: post fix expression (string), output file
+//Post-condition: prints all individual operation in postfix expression & logs to output file
 void printOperations(string expression, ofstream& outputFile) {
     stack<string> newStack;
     string operand1;
@@ -270,28 +290,22 @@ void printOperations(string expression, ofstream& outputFile) {
             newStack.push(string(1, charRead));
         }
         else if (isOperator(charRead)) {
-            if (!newStack.empty()) {
-                operand1 = newStack.top();
-                newStack.pop();
-            }
+            operand1 = newStack.top();
+            newStack.pop();
             
-            if (!newStack.empty()) {
-                operand2 = newStack.top();
-                newStack.pop();
+            operand2 = newStack.top();
+            newStack.pop();
                 
-                newStack.push(operand2 + operand1 + charRead);
-                outputFile << "\t " << operand2 + operand1 + charRead << endl;
-                cout << "\t " << operand2 + operand1 + charRead << endl;
-            } 
-            else {
-                outputFile << "Invalid Statement: \n\t Illegal parenthesis use\n";
-                cout << "Invalid Statement: \n\t Illegal parenthesis use\n";
-            }
-
+            newStack.push(operand2 + operand1 + charRead);
+            outputFile << "\t " << operand2 + operand1 + charRead << endl;
+            cout << "\t " << operand2 + operand1 + charRead << endl;
         }
     }
 }
 
+//Description: Function to construct tree from postfix expression
+//Pre-condition: post fix expression (string), output file
+//Post-condition: constructs and prints tree, prints prefix, infix and postfix notation, initiates evaluation using prefix
 void constructTree(string expression, ofstream& outputFile) {
 
     for (int i = 0; i < expression.length(); i++) { 
@@ -351,6 +365,7 @@ void constructTree(string expression, ofstream& outputFile) {
 /* preordertree traversal */
 void preorder(Node* ptr, ofstream& outputFile)
 {
+    //print visit, left, right
     if (ptr) {
         outputFile << ptr->data;
         cout << ptr->data;
@@ -363,6 +378,7 @@ void preorder(Node* ptr, ofstream& outputFile)
 
 /* inordertree traversal */
 void inorder(Node* ptr, ofstream& outputFile){
+    //print left, visit, right
     if (ptr) {
         inorder(ptr->left, outputFile);
         outputFile << ptr->data;
@@ -373,6 +389,7 @@ void inorder(Node* ptr, ofstream& outputFile){
 
 /* postordertree traversal */
 void postorder(Node* ptr, ofstream& outputFile){
+    //print left, right, visit
     if (ptr) {
         postorder(ptr->left, outputFile);
         postorder(ptr->right, outputFile);
@@ -382,7 +399,9 @@ void postorder(Node* ptr, ofstream& outputFile){
 }
 
 
-//Print Tree in Level Order
+//Description: Print tree in level order
+//Pre-condition: root node as input
+//Post-condition: prints tree
 void printTree(Node* node, ofstream& outputFile)
 {
     outputFile << "\nTree: " << endl;
@@ -400,7 +419,9 @@ void printTree(Node* node, ofstream& outputFile)
 }
 
 
-//Print node at current level
+//Description: Print node at current level
+//Pre-condition: root node as input, level (int), output file
+//Post-condition: prints tree
 void printCurrentLevel(Node* node, int level, ofstream& outputFile)
 {
     if (node != NULL) {
@@ -421,7 +442,10 @@ void printCurrentLevel(Node* node, int level, ofstream& outputFile)
 
 }
 
-//Function to get height of tree
+
+//Description: function to get height of tree
+//Pre-condition: root node as input
+//Post-condition: returns height of tree
 int height(Node* node)
 {
     if (!node) {
@@ -435,7 +459,9 @@ int height(Node* node)
 }
 
 
-
+//Description: Function to convert char to int
+//Pre-condition: char read
+//Post-condition: returns converted int
 int convertToDigit(char charRead) {
     //Convert numbers in expression to int by subtracting '0'
     if (isdigit(charRead)) {
@@ -447,10 +473,12 @@ int convertToDigit(char charRead) {
     }
 }
 
-
+//Description: Function to evaluate prefix expression
+//Pre-condition: prefix expression (string), output file
+//Post-condition: prints evaluation operations and result
 void prefixEvaluation(string expression, ofstream& outputFile) {
     stack<string> stringStack;
-    stack<double> sumStack;
+    stack<double> resultStack;
     string operand1;
     string operand2;
 
@@ -467,20 +495,20 @@ void prefixEvaluation(string expression, ofstream& outputFile) {
             stringStack.push(string(1, charRead));
 
             int digit = convertToDigit(charRead);
-            sumStack.push(digit);
+            resultStack.push(digit);
         }
         else if (isOperator(charRead)) {
             operand1 = stringStack.top();
             stringStack.pop();
 
-            oper1 = sumStack.top();
-            sumStack.pop();
+            oper1 = resultStack.top();
+            resultStack.pop();
 
             operand2 = stringStack.top();
             stringStack.pop();
 
-            oper2 = sumStack.top();
-            sumStack.pop();
+            oper2 = resultStack.top();
+            resultStack.pop();
 
             stringStack.push(charRead + operand1 + operand2);
             outputFile << "\t " << charRead + operand1 + operand2;
@@ -488,12 +516,12 @@ void prefixEvaluation(string expression, ofstream& outputFile) {
 
             //Evaluate expression
             if (charRead == '+') {
-                sumStack.push(oper1 + oper2);
+                resultStack.push(oper1 + oper2);
             }
             if (charRead == '-') {
-                sumStack.push(oper1 - oper2);
+                resultStack.push(oper1 - oper2);
             }if (charRead == '*') {
-                sumStack.push(oper1 * oper2);
+                resultStack.push(oper1 * oper2);
             }
             if (charRead == '/') {
                 if (oper2 == 0) {
@@ -501,16 +529,16 @@ void prefixEvaluation(string expression, ofstream& outputFile) {
                     outputFile << " = ERROR (Division by zero not allowed)" << endl;
                     return;
                 }
-                sumStack.push(oper1 / oper2);
+                resultStack.push(oper1 / oper2);
             }
 
-            outputFile << " = " << sumStack.top() << endl;
-            cout << " = " << sumStack.top() << endl;
+            outputFile << " = " << resultStack.top() << endl;
+            cout << " = " << resultStack.top() << endl;
         }
 
     }
 
     //prints result of evaluation
-    outputFile << "Final Result: " << sumStack.top() << endl;
-    cout << "Final Result: " << sumStack.top() << endl;
+    outputFile << "Final Result: " << resultStack.top() << endl;
+    cout << "Final Result: " << resultStack.top() << endl;
 }

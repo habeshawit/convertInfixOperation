@@ -1,0 +1,60 @@
+
+Successfully opened input file: 'statements2.dat'
+
+---------------------------------------------------------------------
+
+Input Line: # ( ( ( a + B ) ) ) ) ) #
+Invalid Statement: 
+	Mismatched parenthesis
+	Invalid operator/operand 'a'
+
+---------------------------------------------------------------------
+
+Input Line: # ( ( ( A ^ B ) ) ) #
+Invalid Statement: 
+	Invalid operator/operand '^'
+
+---------------------------------------------------------------------
+
+Input Line: # ( ( A * ( B + D ) / E ) ) - F * ( G + H / K ) ) ) #
+Invalid Statement: 
+	Mismatched parenthesis
+
+---------------------------------------------------------------------
+
+Input Line: # (A+B) #
+Invalid Statement: 
+	Spacing error
+	Inaccurate use of parenthesis
+
+---------------------------------------------------------------------
+
+Input Line: # ( ( ( A + B ) ) ) ) ) #
+Invalid Statement: 
+	Mismatched parenthesis
+
+---------------------------------------------------------------------
+
+Input Line: # ( A - ) + B #
+Invalid Statement: 
+	Inaccurate use of parenthesis
+
+---------------------------------------------------------------------
+
+Input Line: # 9 / 0 #
+Valid Statement
+Postfix Expresssion: 90/
+Operations: 
+	 90/
+
+Tree: 
+	/ 
+	9 0 
+
+Prefix: /90
+Infix: 9/0
+Postfix: 90/
+Evaluation: 
+	 /90 = ERROR (Division by zero not allowed)
+
+Program completed.

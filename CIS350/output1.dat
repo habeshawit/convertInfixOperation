@@ -1,5 +1,5 @@
 
-Program reading from statements1.dat
+Successfully opened input file: 'statements1.dat'
 
 ---------------------------------------------------------------------
 
@@ -327,3 +327,5 @@ Evaluation:
 	 -1/+YN5 = -6.8
 	 +-1/+YN5*3Y = 68.2
 Final Result: 68.2
+
+Program completed.
